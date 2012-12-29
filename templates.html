@@ -1,55 +1,57 @@
 
 <h4>Your Cart</h4>
-<div data-bind='visible : hasItems' id='cart'>
-<form accept-charset="UTF-8" action="/gifts/create" id="checkoutForm" method="post">
-<table class='table smaller'>
-<thead>
-<th>Item</th>
-<th>Qty.</th>
-<th style='text-align:right;width:20px'>Price</th>
-<th style='text-align:right;width:20px'>Disc.</th>
-<th style='text-align:right;width:20px'>Total</th>
-</thead>
-<tbody data-bind='foreach:items'>
-<tr>
-<td data-bind='text:description' width='120'></td>
-<td>
-<input class='qty' data-bind='value : quantity, event:{change:$parent.quantityChanged}' style='width:24px' type='text'>
-</td>
-<td data-bind='text: $parent.toMoney(price * quantity)' style='text-align:right'></td>
-<td data-bind='text: $parent.toMoney(discount)' style='text-align:right'></td>
-<td data-bind='text: $parent.toMoney((price * quantity) - discount)' style='text-align:right'></td>
-<td>
-<a data-bind='click:$parent.removeClicked' href='#'>
-<icon class='icon-remove'></icon>
-<input data-bind='value:sku' name='items[][sku]' type='hidden'>
-<input data-bind='value:quantity' name='items[][qty]' type='hidden'>
-</a>
-</td>
-</tr>
-</tbody>
-<tfoot>
-<tr>
-<td class='right' colspan='5' style='text-align:right;font-size:19px'>
-<strong data-bind='text:toMoney(total())'></strong>
-</td>
-<td></td>
-</tr>
-<tr>
-<td colspan='5'>
-<button class='btn btn-info' id='checkout' type='submit'>
-Save & Checkout
-</button>
-</td>
-<td></td>
-</tr>
-</tfoot>
-</table>
-</form>
+<div data-bind="visible : hasItems" id="cart">
+    <form accept-charset="UTF-8" action="/gifts/create" id="checkoutForm" method="post">
+        <table class="table smaller">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty.</th>
+                <th style="text-align:right;width:20px">Price</th>
+                <th style="text-align:right;width:20px">Disc.</th>
+                <th style="text-align:right;width:20px">Total</th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach:items">
+            <tr>
+                <td data-bind="text:description" width="120"></td>
+                <td>
+                    <input class="qty" data-bind="value : quantity, event:{change:$parent.quantityChanged}" style="width:24px" type="text">
+                </td>
+                <td data-bind="text: displaySubtotal" style="text-align:right"></td>
+                <td data-bind="text: displayDiscount" style="text-align:right"></td>
+                <td data-bind="text: displayTotal" style="text-align:right"></td>
+                <td>
+                    <a data-bind="click:$parent.removeClicked" href="#">
+                        <icon class="icon-remove"></icon>
+                        <input data-bind="value: sku" name="items[][sku]" type="hidden">
+                        <input data-bind="value: quantity" name="items[][qty]" type="hidden">
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td class="right" colspan="5" style="text-align:right;font-size:19px">
+                    <strong data-bind="text: displayTotal"></strong>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <button class="btn btn-info" id="checkout" type="submit">
+                        Save & Checkout
+                    </button>
+                </td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
 
 </div>
-<div data-bind='visible : !hasItems()' id='empty-cart'>
-<p>Select from the items on the left.</p>
+<div data-bind="visible : !hasItems" id="empty-cart">
+    <p>Select from the items on the left.</p>
 </div>
 </aside>
 </div>

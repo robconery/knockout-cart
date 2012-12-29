@@ -1,28 +1,66 @@
 var Tekpub = Tekpub || {};
+
 Tekpub.CartItem = function(options){
   
   var cartItem = {};
   var qty = (options.quantity || 1);
-  cartItem.price = options.price || 0.00;
-  cartItem.quantity = qty;
-  cartItem.sku = options.sku || "";
-  cartItem.description = options.description || "";
-  cartItem.discount = options.discount || 0;
+  cartItem.price = ko.observable(options.price || 0.00);
+  cartItem.quantity = ko.observable(qty);
+  cartItem.sku = ko.observable(options.sku || "");
+  cartItem.description = ko.observable(options.description || "");
+  cartItem.discount = ko.observable(options.discount || 0);
+
+  cartItem.displaySubtotal = ko.computed(function() { 
+    return Tekpub.Utils.toMoney(cartItem.price() * cartItem.quantity());
+  });
+
+  cartItem.displayDiscount = ko.computed(function() { 
+    return Tekpub.Utils.toMoney(cartItem.discount());
+  });
+
+  cartItem.displayTotal = ko.computed(function() { 
+    return Tekpub.Utils.toMoney(cartItem.price() * cartItem.quantity() - cartItem.discount());
+  });
+
+  cartItem.incrementQuantity = function() { 
+    cartItem.quantity(cartItem.quantity() + 1);
+  };
   cartItem.priceInPennies = function(){
-    return cartItem.price * 100;
+    return cartItem.price() * 100;
   };
 
   cartItem.lineTotal = function() {
-    return (cartItem.price - cartItem.discount) * cartItem.quantity;
+    return (cartItem.price() - cartItem.discount()) * cartItem.quantity();
   };
 
   return cartItem;
 }
 
+Tekpub.Utils = (function() { 
+    var self = this;
+
+    self.toMoney = function(amount){
+      var fixed = amount.toFixed(2);
+      return "$" + fixed;
+    };
+    self.storedToCartItems = function(items) { 
+      var parsedItems = [];
+
+      ko.utils.arrayForEach(items, function(item) { 
+        parsedItems.push(new Tekpub.CartItem(item));
+      });
+
+      return parsedItems;
+    };
+
+    return self;
+})();
+
 Tekpub.Cart = function(){
   var self = this;
   var stored = JSON.parse(localStorage.getItem("tekpubCart")) || [];
-  self.items = ko.observableArray(stored);
+
+  self.items = ko.observableArray(Tekpub.Utils.storedToCartItems(stored));
 
   self.calculateDiscount = function(){
     ko.utils.arrayForEach(self.items(),function(item){
@@ -32,10 +70,10 @@ Tekpub.Cart = function(){
       //why there's a discrepancy :)
 
       //simple rule : 20% discount if you buy 5 or more
-      if(item.quantity >= 5){
-        item.discount = (item.price * item.quantity) * .2;
+      if(item.quantity() >= 5){
+        item.discount((item.price() * item.quantity()) * .2);
       }else{
-        item.discount = 0;
+        item.discount(0);
       }
 
     });
@@ -51,13 +89,9 @@ Tekpub.Cart = function(){
     var items = self.items();
 
     if(existing){
-      existing.quantity = parseInt(existing.quantity);
-      existing.quantity+= (item.quantity || 1);
-      self.items(self.items());
-      //refresh hack
-      self.refreshItems();
+      existing.incrementQuantity();
     }else{
-      existing = Tekpub.CartItem({
+      existing = new Tekpub.CartItem({
         price : item.price,
         sku : item.sku, 
         description : item.description,
@@ -68,48 +102,39 @@ Tekpub.Cart = function(){
     return existing;
   };
   
-  self.refreshItems = function(){
-
-    var old = self.items.removeAll();
-    self.items(old);
-
-  };
-
   self.rowCount = function() {
     return self.items().length;
   };
 
   self.remove = function(sku) {
     self.items.remove(function(item) {
-      return item.sku == sku;
+      return item.sku() == sku;
     });
   };
   
-  self.toMoney = function(amount){
-    var fixed = amount.toFixed(2);
-    return "$" + fixed;
-  };
-
   self.removeClicked = function(item) {
-    self.remove(item.sku);
+    self.remove(item.sku());
   };
 
   self.itemCount = function() {
     var itemCount = 0;
     ko.utils.arrayForEach(self.items(),function(item){
-      itemCount += item.quantity;
+      itemCount += item.quantity();
     });
     return itemCount;
   };
 
   self.total = function() {
     var sum = 0;
-    ko.utils.arrayForEach(self.items(),function(item){
-      sum += (item.price * item.quantity) - item.discount;
+    ko.utils.arrayForEach(self.items(), function(item){
+      sum += (item.price() * item.quantity() - item.discount());
     });
     return sum;
   };
 
+  self.displayTotal = ko.computed(function() { 
+    return Tekpub.Utils.toMoney(self.total());
+  });
   self.empty = function(){
     self.items([]);
   };
@@ -120,13 +145,13 @@ Tekpub.Cart = function(){
 
   self.find = function(sku){
     return ko.utils.arrayFirst(self.items(),function(item){
-      return item.sku === sku;
+      return item.sku() === sku;
     });
   };
 
   self.items.subscribe(function(items){
     self.calculateDiscount();
-    localStorage.setItem("tekpubCart",JSON.stringify(items));
+    localStorage.setItem("tekpubCart",ko.toJSON(items));
   });
 
   self.hasItems = ko.computed(function(){
@@ -134,19 +159,19 @@ Tekpub.Cart = function(){
   });
 
   self.quantityChanged = function(item,ev) {
-    var qty = parseInt(item.quantity)
+    var qty = parseInt(item.quantity())
     if(qty == 0){
       self.items.remove(item);
     }
-    if(!self.isNumber(item.quantity)){
+    if(!self.isNumber(item.quantity())){
       item.quantity = 1;
     }
-    self.refreshItems();
   };
 
   self.isNumber = function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
-  }
+  };
+
 };
 
 $(function(){
