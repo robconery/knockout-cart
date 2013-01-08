@@ -1,4 +1,5 @@
 var Tekpub = Tekpub || {};
+var itemsSubscriptions = [];
 
 Tekpub.CartItem = function(options){
   
@@ -60,7 +61,14 @@ Tekpub.Utils = (function() {
 
       return parsedItems;
     };
-
+    self.subscribeToCartItems = function (items) {
+      ko.utils.arrayForEach(items, function(item) {
+      itemsSubscriptions.push(item.quantity.subscribe(function(value) {
+          localStorage.setItem("tekpubCart",ko.toJSON(items));
+        })
+      );
+    });
+    };
     return self;
 })();
 
@@ -69,6 +77,9 @@ Tekpub.Cart = function(){
   var stored = JSON.parse(localStorage.getItem("tekpubCart")) || [];
 
   self.items = ko.observableArray(Tekpub.Utils.storedToCartItems(stored));
+
+  //set up intial subscriptions to the cart items
+  Tekpub.Utils.subscribeToCartItems(self.items());
 
   self.addClicked = function(data,ev) {
     var item =$(ev.currentTarget).data();
@@ -142,6 +153,13 @@ Tekpub.Cart = function(){
   };
 
   self.items.subscribe(function(items){
+    //dispose of any existing subscriptions
+    ko.utils.arrayForEach(itemsSubscriptions, function(sub) { sub.dispose(); });
+
+    //subscribe to all the current items
+    Tekpub.Utils.subscribeToCartItems(items());
+
+    //save here, for when an item get's added and the qty isn't updated
     localStorage.setItem("tekpubCart",ko.toJSON(items));
   });
 
