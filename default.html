@@ -1,5 +1,12 @@
+<!DOCTYPE html>
 
-<h4>Your Cart</h4>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Cart Example</title>
+    </head>
+    <body>
+        <h4>Your Cart</h4>
 <div data-bind="visible : hasItems" id="cart">
     <form accept-charset="UTF-8" action="/gifts/create" id="checkoutForm" method="post">
         <table class="table smaller">
@@ -53,7 +60,9 @@
 <div data-bind="visible : !hasItems" id="empty-cart">
     <p>Select from the items on the left.</p>
 </div>
-</aside>
-</div>
-</div>
-</div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.0/knockout-min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/html" id="cart" src="templates.html"></script>
+        <script type="text/javascript" src="/src/cart.js"></script>
+    </body>
+</html>

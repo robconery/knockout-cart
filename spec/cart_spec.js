@@ -32,11 +32,11 @@ describe("Shopping Cart", function() {
 
     it("stores a description", function(){
       item = cart.find("monkey");
-      expect(item.description).toEqual("test product");
+      expect(item.description()).toEqual("test product");
     });
     it("stores a quantity and price",function(){
       item = cart.find("monkey");
-      expect(item.price).toEqual(5.00);
+      expect(item.price()).toEqual(5.00);
     });
     it("price in pennies is 1200",function(){
       item = cart.find("monkey");
@@ -45,7 +45,7 @@ describe("Shopping Cart", function() {
     it("increments quantity with duplicate", function() {
       cart.addItem(product);
       item = cart.find("monkey");
-      expect(item.quantity).toEqual(2);
+      expect(item.quantity()).toEqual(2);
     }); 
     it("empties the cart", function(){
       cart.empty();
