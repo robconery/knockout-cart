@@ -1,57 +1,71 @@
 
+
+
+<button data-bind='clickWithData:addItem' data-description='Tekpub Yearly Subscription' data-price='149.0' data-sku='yearly'>Buy</button>
+
+<button data-bind='clickWithData:addItem' data-description='Tekpub Forever Subscription' data-price='10000.0' data-sku='forever'>Buy</button>
+
 <h4>Your Cart</h4>
 <div data-bind='visible : hasItems' id='cart'>
 <form accept-charset="UTF-8" action="/gifts/create" id="checkoutForm" method="post">
-<table class='table smaller'>
-<thead>
-<th>Item</th>
-<th>Qty.</th>
-<th style='text-align:right;width:20px'>Price</th>
-<th style='text-align:right;width:20px'>Disc.</th>
-<th style='text-align:right;width:20px'>Total</th>
-</thead>
-<tbody data-bind='foreach:items'>
-<tr>
-<td data-bind='text:description' width='120'></td>
-<td>
-<input class='qty' data-bind='value : quantity, event:{change:$parent.quantityChanged}' style='width:24px' type='text'>
-</td>
-<td data-bind='text: $parent.toMoney(price * quantity)' style='text-align:right'></td>
-<td data-bind='text: $parent.toMoney(discount)' style='text-align:right'></td>
-<td data-bind='text: $parent.toMoney((price * quantity) - discount)' style='text-align:right'></td>
-<td>
-<a data-bind='click:$parent.removeClicked' href='#'>
-<icon class='icon-remove'></icon>
-<input data-bind='value:sku' name='items[][sku]' type='hidden'>
-<input data-bind='value:quantity' name='items[][qty]' type='hidden'>
-</a>
-</td>
-</tr>
-</tbody>
-<tfoot>
-<tr>
-<td class='right' colspan='5' style='text-align:right;font-size:19px'>
-<strong data-bind='text:toMoney(total())'></strong>
-</td>
-<td></td>
-</tr>
-<tr>
-<td colspan='5'>
-<button class='btn btn-info' id='checkout' type='submit'>
-Save & Checkout
-</button>
-</td>
-<td></td>
-</tr>
-</tfoot>
-</table>
+  <table class='table smaller'>
+    <thead>
+      <th>Item</th>
+      <th>Qty.</th>
+      <th style='text-align:right;width:20px'>Price</th>
+      <th style='text-align:right;width:20px'>Disc.</th>
+      <th style='text-align:right;width:20px'>Total</th>
+    </thead>
+    <tbody data-bind='foreach:items'>
+      <tr>
+        <td data-bind='text:description' width='120'></td>
+        <td>
+          <input class='qty' data-bind='value : quantity' style='width:24px' type='text'>
+        </td>
+        <td data-bind='currency: subtotal' style='text-align:right'></td>
+        <td data-bind='currency: discount' style='text-align:right'></td>
+        <td data-bind='currency: lineTotal' style='text-align:right'></td>
+        <td>
+          <a data-bind='click:$parent.removeClicked' href='#'>
+            <icon class='icon-remove'></icon>
+            <input data-bind='value:sku' name='items[][sku]' type='hidden'>
+            <input data-bind='value:quantity' name='items[][qty]' type='hidden'>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class='right' colspan='5' style='text-align:right;font-size:19px'>
+          <strong data-bind='currency: total()'></strong>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan='5'>
+          <button class='btn btn-info' id='checkout' type='submit'>
+            Save & Checkout
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
 </form>
-
 </div>
 <div data-bind='visible : !hasItems()' id='empty-cart'>
-<p>Select from the items on the left.</p>
+  <p>Select from the items on the left.</p>
 </div>
-</aside>
-</div>
-</div>
-</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.1.0.js"></script>
+<script src="cart.min.js"></script>
+
+<script>
+  $(function(){
+    
+    var cart = new Tekpub.Cart();
+    ko.applyBindings(cart);
+
+  });
+</script>
