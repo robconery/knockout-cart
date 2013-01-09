@@ -28,6 +28,16 @@ The cart needs KnockoutJS (2.x or greater) and jQuery. Make sure you have those,
 
 You can open a console to play with the cart if you like - it's namespaced under Tekpub.Cart.
 
+## Usage
+The cart works based on bindings, as well as data attributes set on the HTML markup. **You do not need to use it this way** but if you want Fun Out of The Box you can.
+
+Here's an example:
+
+```html
+<button data-bind='click:addClicked' data-description='Tekpub Yearly Subscription' data-price='149.0' data-sku='yearly'>Give</button>
+```
+The button's click event is bound to the Knockout Cart's click event handler. It will pull off the `data-*` attributes as needed.
+
 ## Tests
 
 The Jasmine tests are under the "spec" directory. Just double click the file to run. I'll be adding more of them over time.
