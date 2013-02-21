@@ -45,7 +45,7 @@ describe("Shopping Cart", function() {
     it("increments quantity with duplicate", function() {
       cart.addItem(product);
       item = cart.find("monkey");
-      expect(item.quantity).toEqual(2);
+      expect(item.quantity()).toEqual(2);
     }); 
     it("empties the cart", function(){
       cart.empty();

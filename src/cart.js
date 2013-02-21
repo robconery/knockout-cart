@@ -83,7 +83,7 @@ Tekpub.Cart = function(){
   self.itemCount = function() {
     var itemCount = 0;
     ko.utils.arrayForEach(self.items(),function(item){
-      itemCount += item.quantity;
+      itemCount += item.quantity();
     });
     return itemCount;
   };
@@ -104,6 +104,10 @@ Tekpub.Cart = function(){
     return ko.utils.arrayFirst(self.items(),function(item){
       return item.sku === sku;
     });
+  };
+  
+  self.contains = function(sku){
+    return self.find(sku) ? true : false;
   };
 
   //dirty tracking
