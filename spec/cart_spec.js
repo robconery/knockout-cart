@@ -62,7 +62,7 @@ describe("Shopping Cart", function() {
     });
   });
 
-  describe("calculations with 2 rows of 4 items, $5 apiece", function(){
+  describe("calculations with 2 rows of 2 items each, $5 apiece", function(){
     beforeEach(function() {
       cart.addItem(product);
       cart.addItem(product);
@@ -85,6 +85,33 @@ describe("Shopping Cart", function() {
       expect(cart.total()).toEqual(20.00);
     });
   });
+  
+  describe("calculations with 1 row of 5 items, $5 apiece", function(){
+    beforeEach(function() {
+      cart.addItem(product);
+      cart.addItem(product);
+      cart.addItem(product);
+      cart.addItem(product);
+      cart.addItem(product);
+
+    });
+
+    afterEach(function(){
+      cart.empty();
+    });
+
+    it("has a row count of 1", function() {
+      expect(cart.rowCount()).toEqual(1);  
+    });
+    it("has an item count of 5", function() {
+      expect(cart.itemCount()).toEqual(5);
+    });
+    it("has a total of $20 (including 20% discount)", function() {
+      expect(cart.total()).toEqual(20.00);
+    });
+  });
+  
+  
   
   describe("storage", function() {
     beforeEach(function() {

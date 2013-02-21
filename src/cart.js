@@ -23,7 +23,7 @@ Tekpub.CartItem = function(options,callback){
   });
 
   cartItem.lineTotal = ko.computed(function() {
-    return (cartItem.price - cartItem.discount()) * cartItem.quantity();
+    return cartItem.subtotal() - cartItem.discount();
   });
 
   if(callback){
