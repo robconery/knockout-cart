@@ -24,7 +24,7 @@ describe("Shopping Cart", function() {
     });
     
     it("stores a sku", function(){
-      expect(cart.contains("monkey")).toBeTruthy();
+      expect(cart.find("monkey")).toBeTruthy();
     });
     it("has a count", function(){
       expect(cart.itemCount()).toEqual(1);

@@ -105,10 +105,6 @@ Tekpub.Cart = function(){
       return item.sku === sku;
     });
   };
-  
-  self.contains = function(sku){
-    return self.find(sku) ? true : false;
-  };
 
   //dirty tracking
   ko.computed(function(){
