@@ -23,7 +23,7 @@ Tekpub.CartItem = function(options,callback){
   });
 
   cartItem.lineTotal = ko.computed(function() {
-    return (cartItem.price - cartItem.discount()) * cartItem.quantity();
+    return cartItem.subtotal() - cartItem.discount();
   });
 
   if(callback){
@@ -83,7 +83,7 @@ Tekpub.Cart = function(){
   self.itemCount = function() {
     var itemCount = 0;
     ko.utils.arrayForEach(self.items(),function(item){
-      itemCount += item.quantity;
+      itemCount += item.quantity();
     });
     return itemCount;
   };
