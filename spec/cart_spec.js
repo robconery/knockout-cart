@@ -3,9 +3,9 @@ describe("Shopping Cart", function() {
   cart = {};
   var product = {price : 5.00,sku : "monkey",description : "test product"};
   var product2 = {price : 5.00,sku : "chunky",description : "test product"};
+  var discountableProduct = {price : 125.00, sku : "expensive", description : "expensive product"};
 
   beforeEach(function() {
-    //cart = new Tekpub.Cart();
     cart = new Tekpub.Cart();
   });
   
@@ -24,8 +24,9 @@ describe("Shopping Cart", function() {
     });
     
     it("stores a sku", function(){
-      expect(cart.contains("monkey")).toBeTruthy();
+      expect(cart.find("monkey")).toBeTruthy();
     });
+
     it("has a count", function(){
       expect(cart.itemCount()).toEqual(1);
     });
@@ -45,7 +46,7 @@ describe("Shopping Cart", function() {
     it("increments quantity with duplicate", function() {
       cart.addItem(product);
       item = cart.find("monkey");
-      expect(item.quantity).toEqual(2);
+      expect(item.quantity()).toEqual(2);
     }); 
     it("empties the cart", function(){
       cart.empty();
@@ -104,52 +105,43 @@ describe("Shopping Cart", function() {
       
     });
   });
-  // it("should be able to play a Song", function() {
-  //   player.play(song);
-  //   expect(player.currentlyPlayingSong).toEqual(song);
 
-  //   //demonstrates use of custom matcher
-  //   expect(player).toBePlaying(song);
-  // });
+  describe("discounts", function(){
+    beforeEach(function() {
+      //nothing...
+    });
 
-  // describe("when song has been paused", function() {
-  //   beforeEach(function() {
-  //     player.play(song);
-  //     player.pause();
-  //   });
+    afterEach(function(){
+      cart.empty();
+    });    
 
-  //   it("should indicate that the song is currently paused", function() {
-  //     expect(player.isPlaying).toBeFalsy();
+    it("should not apply discount for less than 5 items in cart", function() {
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);      
 
-  //     // demonstrates use of 'not' with a custom matcher
-  //     expect(player).not.toBePlaying(song);
-  //   });
+      expect(cart.rowCount()).toEqual(1);
+      
+      var cartItem = cart.items()[0];
+      expect(cartItem.quantity()).toEqual(4);
+      expect(cartItem.discount()).toEqual(0);
+    });
 
-  //   it("should be possible to resume", function() {
-  //     player.resume();
-  //     expect(player.isPlaying).toBeTruthy();
-  //     expect(player.currentlyPlayingSong).toEqual(song);
-  //   });
-  // });
+    it("should apply discount for 5 or more items in cart", function() {
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
+      cart.addItem(discountableProduct);
 
-  // // demonstrates use of spies to intercept and test method calls
-  // it("tells the current song if the user has made it a favorite", function() {
-  //   spyOn(song, 'persistFavoriteStatus');
+      expect(cart.rowCount()).toEqual(1);
 
-  //   player.play(song);
-  //   player.makeFavorite();
+      var cartItem = cart.items()[0];
+      expect(cartItem.quantity()).toEqual(5);
+      expect(cartItem.discount()).toEqual(125.00);
+    });
 
-  //   expect(song.persistFavoriteStatus).toHaveBeenCalledWith(true);
-  // });
+  });
 
-  // //demonstrates use of expected exceptions
-  // describe("#resume", function() {
-  //   it("should throw an exception if song is already playing", function() {
-  //     player.play(song);
-
-  //     expect(function() {
-  //       player.resume();
-  //     }).toThrow("song is already playing");
-  //   });
-  // });
 });
